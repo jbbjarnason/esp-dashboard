@@ -3,15 +3,9 @@
 
 using namespace ESPVuetify;
 
-Tab::Tab(std::weak_ptr<Dashboard> dashboard):
-_dashboard(std::move(dashboard))
+Tab::Tab():
+_dashboard(Dashboard::instance())
 {
-}
-
-std::shared_ptr<Tab> Tab::create() {
-    auto dashboard = Dashboard::create();
-    auto tab = std::shared_ptr<Tab>(new Tab(dashboard));
-    return tab;
 }
 
 template<class Component>

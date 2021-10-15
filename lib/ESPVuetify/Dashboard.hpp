@@ -5,11 +5,14 @@ namespace ESPVuetify {
 
 class Tab;
 
+/**
+*  @brief Dashboard main class, parent of all containers and widgets.
+*/
 class Dashboard: std::enable_shared_from_this<Dashboard> {
 public:
-    static std::shared_ptr<Dashboard> create();
+    inline static std::shared_ptr<Dashboard> instance();
 
-    std::shared_ptr<Tab> create();
+    std::shared_ptr<Tab> create() const;
 
 protected:
     Dashboard();
