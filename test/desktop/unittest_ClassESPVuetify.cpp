@@ -9,7 +9,7 @@ using namespace ESPVuetify;
 class Dashboard_test: public ::testing::Test {
 protected:
     void SetUp() override {
-        _dash = Dashboard::create();
+        _dash = Dashboard::instance();
     }
     void TearDown() override {
 

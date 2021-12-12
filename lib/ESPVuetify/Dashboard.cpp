@@ -16,7 +16,7 @@ std::shared_ptr<Dashboard> Dashboard::instance() {
 }
 
 std::shared_ptr<Tab> Dashboard::create() const {
-    return std::make_shared<Tab>(shared_from_this());
+    return std::make_shared<Tab>();
 }
 
 
