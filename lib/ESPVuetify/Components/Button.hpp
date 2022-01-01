@@ -1,19 +1,19 @@
 #pragma once
 
-#include <memory>
 #include "Types.hpp"
+#include "Component.hpp"
+#include "GenID.hpp"
 
 namespace ESPVuetify {
 
-class Component;
-
-class Button {
+class Button : public GenID {
 public:
-    explicit Button(std::shared_ptr<Component> base);
+    Button() = default;
+    virtual ~Button() = default;
     void addProp(const std::string& key, const SupportedTypes& value);
     void addEvent(const Callback& cb);
 private:
-    std::shared_ptr<Component> base_{ nullptr };
+    Component base_;
 };
 
 }

@@ -13,13 +13,13 @@
 
 namespace ESPVuetify {
 
-void to_json(nlohmann::json& j, const SupportedTypes& v) {
+static void to_json(nlohmann::json& j, const SupportedTypes& v) {
     std::visit([&](auto&& value) {
         j = nlohmann::json{{"value", std::forward<decltype(value)>(value)}};
     }, v);
 }
 
-void from_json(const nlohmann::json& j, SupportedTypes& v) {
+static void from_json(const nlohmann::json& j, SupportedTypes& v) {
     v = j.at("value"); // this could callback double as int but does it really matter
 }
 
@@ -42,13 +42,13 @@ private:
     SupportedTypes value_{};
 };
 
-void to_json(nlohmann::json& j, const Prop& p) {
+static void to_json(nlohmann::json& j, const Prop& p) {
     to_json(j, p.get());
 }
 
-typedef std::map<std::string, Prop> PropMap;
+using PropMap = std::map<std::string, Prop>;
 
-void to_json(nlohmann::json& j, const PropMap& p) {
+static void to_json(nlohmann::json& j, const PropMap& p) {
     j["props"] = {};
     auto& jsonProps{ j["props"] };
     for (const auto& prop : p) {
@@ -102,7 +102,7 @@ private:
     std::optional<Event> event_{ std::nullopt };
 };
 
-void to_json(nlohmann::json& j, const Component& c) {
+static void to_json(nlohmann::json& j, const Component& c) {
     to_json(j, c.getPropMap());
     j["event"] = c.getEvent().has_value();
 }
