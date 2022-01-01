@@ -3,8 +3,9 @@
 
 using namespace ESPVuetify;
 
-Tab::Tab():
-_dashboard(Dashboard::instance())
+Tab::Tab()
+//    :
+//_dashboard(Dashboard::instance())
 {
 }
 

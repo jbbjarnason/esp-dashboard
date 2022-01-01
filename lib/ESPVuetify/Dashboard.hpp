@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include "Container.hpp"
 
 namespace ESPVuetify {
 
@@ -16,7 +17,7 @@ public:
 
 protected:
     Dashboard();
-
+    Container container_;
     inline static std::weak_ptr<Dashboard> _instance;
 };
 

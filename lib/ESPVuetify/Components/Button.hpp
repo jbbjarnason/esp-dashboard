@@ -1,6 +1,7 @@
 #pragma once
+
 #include <memory>
-#include "../Types.hpp" // Todo correctly handle private headers
+#include "Types.hpp"
 
 namespace ESPVuetify {
 

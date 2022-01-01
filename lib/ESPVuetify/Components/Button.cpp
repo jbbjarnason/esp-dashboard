@@ -1,5 +1,5 @@
 #include "Button.hpp"
-#include "../Component.hpp" // Todo correctly handle private headers
+#include "Component.hpp"
 
 using namespace ESPVuetify;
 

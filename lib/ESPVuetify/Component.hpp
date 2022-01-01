@@ -13,6 +13,16 @@
 
 namespace ESPVuetify {
 
+void to_json(nlohmann::json& j, const SupportedTypes& v) {
+    std::visit([&](auto&& value) {
+        j = nlohmann::json{{"value", std::forward<decltype(value)>(value)}};
+    }, v);
+}
+
+void from_json(const nlohmann::json& j, SupportedTypes& v) {
+    v = j.at("value"); // this could callback double as int but does it really matter
+}
+
 class Prop {
 public:
     Prop() = default;
@@ -25,43 +35,26 @@ public:
         value_ = value;
         return *this;
     }
-    [[nodiscard]] inline const SupportedTypes& get() const {
+    [[nodiscard]] inline const SupportedTypes& get() const noexcept {
         return value_;
-    }
-    template<typename T>
-    const T& get() const {
-        // Todo: refactor using fold expressions
-        if (std::holds_alternative<bool>(value_)) {
-            return std::get<bool>(value_);
-        }
-        if (std::holds_alternative<int>(value_)) {
-            return std::get<int>(value_);
-        }
-        if (std::holds_alternative<double>(value_)) {
-            return std::get<double>(value_);
-        }
-        if (std::holds_alternative<std::string>(value_)) {
-            return std::get<std::string>(value_);
-        }
     }
 private:
     SupportedTypes value_{};
 };
 
-class Props {
-public:
-    Props() = default;
-    /// \throws std::out_of_range
-    inline Prop& operator[](std::string&& key) {
-        return propMap_.at(key);
+void to_json(nlohmann::json& j, const Prop& p) {
+    to_json(j, p.get());
+}
+
+typedef std::map<std::string, Prop> PropMap;
+
+void to_json(nlohmann::json& j, const PropMap& p) {
+    j["props"] = {};
+    auto& jsonProps{ j["props"] };
+    for (const auto& prop : p) {
+        jsonProps[prop.first] = prop.second;
     }
-    /// \throws std::out_of_range
-    inline Prop& operator[](const std::string& key) {
-        return propMap_.at(key);
-    }
-private:
-    std::map<std::string, Prop> propMap_;
-};
+}
 
 class Event {
 public:
@@ -75,47 +68,43 @@ public:
         cb_ = cb;
         return *this;
     }
-    inline void propagate(const SupportedTypes& value) {
+    inline void propagate(const SupportedTypes& value) const {
         cb_(value);
     }
 private:
     Callback cb_{ [](const auto&){} };
 };
 
-void to_json(nlohmann::json& j, const SupportedTypes& value) {
-    if (std::holds_alternative<int>(value))
-    j = nlohmann::json{{"name", p.name}, {"address", p.address}, {"age", p.age}};
-}
-
-void from_json(const json& j, person& p) {
-    j.at("name").get_to(p.name);
-    j.at("address").get_to(p.address);
-    j.at("age").get_to(p.age);
-}
-
-class Tab;
-
 class Component {
 public:
-    explicit Component(std::weak_ptr<Tab> tab): tab_(std::move(tab)) { }
+    explicit Component() = default;
     void addProp(const std::string& key, const SupportedTypes& value) {
         propMap_[key] = value;
     }
     void addEvent(const Callback& cb) {
         event_ = cb;
     }
-    nlohmann::json render(const std::string& componentName) {
-        nlohmann::json j = propMap_;
-        return {
-            { "name", componentName },
-            { "props", propMap_ }
-        };
+    [[nodiscard]] const SupportedTypes& getProp(const std::string& key) const {
+        try {
+            return propMap_.at(key).get();
+        } catch (const std::out_of_range&) {
+            throw std::invalid_argument("Property: \"" + key + "\" not found");
+        }
+    }
+    [[nodiscard]] const PropMap& getPropMap() const noexcept {
+        return propMap_;
+    }
+    [[nodiscard]] const std::optional<Event>& getEvent() const noexcept {
+        return event_;
     }
 private:
-    std::weak_ptr<Tab> tab_;
-    std::map<std::string, SupportedTypes> propMap_;
-//    Props props_{};
+    PropMap propMap_;
     std::optional<Event> event_{ std::nullopt };
 };
+
+void to_json(nlohmann::json& j, const Component& c) {
+    to_json(j, c.getPropMap());
+    j["event"] = c.getEvent().has_value();
+}
 
 }
