@@ -75,7 +75,7 @@ private:
     Callback cb_{ [](const auto&){} };
 };
 
-class Component : public GenID{
+class Component : public GenID {
 public:
     explicit Component() = default;
     void addProp(const std::string& key, const SupportedTypes& value) {

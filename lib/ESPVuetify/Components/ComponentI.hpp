@@ -1,5 +1,8 @@
 #pragma once
+#include <string>
 #include <string_view>
+
+#include "json.hpp"
 
 #include "Types.hpp"
 #include "GenID.hpp"
@@ -15,9 +18,9 @@ public:
     void addEvent(const Callback& cb) {
         base_.addEvent(cb);
     }
-    [[nodiscard]] UUID getID() const noexcept  {
-        return base_.getID();
-    }
+//    [[nodiscard]] virtual UUID getID() const noexcept {
+//        return base_.getID();
+//    }
     [[nodiscard]] virtual std::string_view getName() const noexcept = 0;
 
     [[nodiscard]] const Component& getBase() const noexcept {

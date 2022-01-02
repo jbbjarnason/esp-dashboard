@@ -25,10 +25,12 @@ TEST_F(Component_test, throwOnNotFoundProperty) {
 #pragma GCC diagnostic pop
 }
 TEST_F(Component_test, toJson) {
+//    gen32 = std::mt19937{ 42 }; // reset random generator, make predictable outcome
+
     component_.addProp("foo", "bar");
     component_.addProp("bar", 42);
     component_.addProp("hello", 4.2);
     component_.addProp("world", true);
     const auto j{ nlohmann::json(component_) };
-    ASSERT_EQ("[{\"event\":false,\"id\":3890346734,\"props\":{\"bar\":{\"value\":42},\"foo\":{\"value\":\"bar\"},\"hello\":{\"value\":4.2},\"world\":{\"value\":true}}}]", j.dump());
+    ASSERT_EQ("[{\"event\":false,\"id\":2350294565,\"props\":{\"bar\":{\"value\":42},\"foo\":{\"value\":\"bar\"},\"hello\":{\"value\":4.2},\"world\":{\"value\":true}}}]", j.dump());
 }
