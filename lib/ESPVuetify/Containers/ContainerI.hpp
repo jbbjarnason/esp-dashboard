@@ -22,10 +22,25 @@ public:
             static_assert((false, "invalid typename T"));
         }
     }
+    [[nodiscard]] const Container<ContainerI>& getContainers() const noexcept {
+        return containers_;
+    }
+    [[nodiscard]] const Container<ComponentI>& getComponents() const noexcept {
+        return components_;
+    }
+    [[nodiscard]] virtual std::string_view getName() const noexcept = 0;
 
 protected:
     Container<ContainerI> containers_;
     Container<ComponentI> components_;
 };
+
+static void to_json(nlohmann::json& j, const ContainerI& containerI) {
+    nlohmann::json obj;
+    to_json(obj["containers"], containerI.getContainers());
+    to_json(obj["components"], containerI.getComponents());
+    obj["name"] = containerI.getName();
+    j.push_back(obj);
+}
 
 }
