@@ -9,3 +9,6 @@ void Button::addProp(const std::string& key, const SupportedTypes& value) {
 void Button::addEvent(const Callback& cb) {
     base_.addEvent(cb);
 }
+UUID Button::getID() const noexcept {
+    return base_.getID();
+}
