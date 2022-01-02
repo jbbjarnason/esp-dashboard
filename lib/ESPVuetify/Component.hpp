@@ -49,11 +49,11 @@ static void to_json(nlohmann::json& j, const Prop& p) {
 using PropMap = std::map<std::string, Prop>;
 
 static void to_json(nlohmann::json& j, const PropMap& p) {
-    j["props"] = {};
-    auto& jsonProps{ j["props"] };
+    nlohmann::json jsonProps;
     for (const auto& prop : p) {
         jsonProps[prop.first] = prop.second;
     }
+    j["props"] = jsonProps;
 }
 
 class Event {

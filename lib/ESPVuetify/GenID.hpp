@@ -9,8 +9,7 @@ using UUID = unsigned long;
 
 class GenID {
 public:
-    virtual ~GenID() = default;
-    [[nodiscard]] UUID getID() const noexcept {
+    [[nodiscard]] virtual UUID getID() const noexcept {
         return id_;
     }
 private:

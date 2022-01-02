@@ -29,6 +29,6 @@ TEST_F(Component_test, toJson) {
     component_.addProp("bar", 42);
     component_.addProp("hello", 4.2);
     component_.addProp("world", true);
-    auto j{ nlohmann::json(component_) };
+    const auto j{ nlohmann::json(component_) };
     ASSERT_EQ("[{\"event\":false,\"id\":3890346734,\"props\":{\"bar\":{\"value\":42},\"foo\":{\"value\":\"bar\"},\"hello\":{\"value\":4.2},\"world\":{\"value\":true}}}]", j.dump());
 }

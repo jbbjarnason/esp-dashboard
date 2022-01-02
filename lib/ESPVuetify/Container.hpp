@@ -1,12 +1,10 @@
 #pragma once
-#include <vector>
-#include <any>
 #include <memory>
-#include <algorithm>
-#include <variant>
-#include <type_traits>
+#include <map>
 
+#include "json.hpp"
 #include "GenID.hpp"
+#include "ComponentI.hpp"
 
 namespace ESPVuetify {
 
@@ -16,23 +14,43 @@ public:
     template<typename T>
     std::shared_ptr<T> create() {
         auto child{ std::make_shared<T>() };
-        childrens_[child->getID()] = child;
+        childrens_.push_back(child);
         return child;
     }
 
     void cleanup() {
         // Make sure we won't end up with dangling references in our map
-        for(auto iter{ childrens_.begin() }; iter != childrens_.end(); ) {
-            if (iter->second.expired()) {
-                iter = childrens_.erase(iter);
-            } else {
-                ++iter;
-            }
-        }
+        childrens_.erase(std::remove_if(childrens_.begin(), childrens_.end(), [](const auto& ptr) { return ptr.expired(); }), childrens_.end());
+    }
+
+    [[nodiscard]] bool empty() const noexcept {
+        return childrens_.empty();
+    }
+
+    [[nodiscard]] size_t size() const noexcept {
+        return childrens_.size();
+    }
+
+    [[nodiscard]] auto begin() const noexcept {
+        return childrens_.begin();
+    }
+
+    [[nodiscard]] auto end() const noexcept {
+        return childrens_.end();
     }
 
 private:
-    std::map<UUID, std::weak_ptr<void>> childrens_;
+    std::vector<std::weak_ptr<ComponentI>> childrens_;
 };
+
+static void to_json(nlohmann::json& j, const Container& c) {
+    nlohmann::json arr;
+    for (const std::weak_ptr<ComponentI>& ptr : c) {
+        if (auto component{ ptr.lock() }) {
+            to_json(arr, *component);
+        }
+    }
+    j["container"] = arr;
+}
 
 }
