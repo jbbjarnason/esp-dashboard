@@ -9,7 +9,7 @@
 
 #include "json.hpp" // todo handle external dependency differently
 #include "Types.hpp"
-
+#include "GenID.hpp"
 
 namespace ESPVuetify {
 
@@ -75,7 +75,7 @@ private:
     Callback cb_{ [](const auto&){} };
 };
 
-class Component {
+class Component : public GenID{
 public:
     explicit Component() = default;
     void addProp(const std::string& key, const SupportedTypes& value) {
@@ -105,6 +105,7 @@ private:
 static void to_json(nlohmann::json& j, const Component& c) {
     to_json(j, c.getPropMap());
     j["event"] = c.getEvent().has_value();
+    j["id"] = c.getID();
 }
 
 }

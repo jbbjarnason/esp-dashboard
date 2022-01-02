@@ -19,7 +19,10 @@ TEST_F(Component_test, addProperty) {
     ASSERT_EQ(SupportedTypes ("bar"),component_.getProp("foo"));
 }
 TEST_F(Component_test, throwOnNotFoundProperty) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
     EXPECT_THROW(component_.getProp("foo"), std::invalid_argument);
+#pragma GCC diagnostic pop
 }
 TEST_F(Component_test, toJson) {
     component_.addProp("foo", "bar");
@@ -27,5 +30,5 @@ TEST_F(Component_test, toJson) {
     component_.addProp("hello", 4.2);
     component_.addProp("world", true);
     auto j{ nlohmann::json(component_) };
-    ASSERT_EQ("[{\"event\":false,\"props\":{\"bar\":{\"value\":42},\"foo\":{\"value\":\"bar\"},\"hello\":{\"value\":4.2},\"world\":{\"value\":true}}}]", j.dump());
+    ASSERT_EQ("[{\"event\":false,\"id\":3890346734,\"props\":{\"bar\":{\"value\":42},\"foo\":{\"value\":\"bar\"},\"hello\":{\"value\":4.2},\"world\":{\"value\":true}}}]", j.dump());
 }
