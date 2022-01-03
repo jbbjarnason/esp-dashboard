@@ -20,5 +20,5 @@ TEST_F(Row_test, createStub) {
     auto stub{ row_.create<ComponentStub>() };
     auto column{ row_.create<Column>() };
     const auto j{ nlohmann::json(row_) };
-    ASSERT_EQ("foo", j.dump());
+    ASSERT_EQ("[[{\"components\":[{\"event\":false,\"id\":949333985,\"name\":\"stub\",\"props\":null}],\"containers\":[{\"components\":null,\"containers\":null,\"id\":2715962298,\"name\":\"v-col\"}],\"id\":545404204,\"name\":\"v-row\"}]]", j.dump());
 }

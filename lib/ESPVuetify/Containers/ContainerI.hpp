@@ -2,12 +2,14 @@
 
 #include <type_traits>
 
+#include "GenericI.hpp"
 #include "Container.hpp"
 #include "ComponentI.hpp" // todo: really, there is some flaw with this pattern
+#include "GenID.hpp"
 
 namespace ESPVuetify {
 
-class ContainerI {
+class ContainerI : public GenID, public GenericI {
 public:
     /// \brief can create any kind of component or any kind of container other than tab
     template<typename T> // Todo: use concept for explicit typename declaration
@@ -28,7 +30,6 @@ public:
     [[nodiscard]] const Container<ComponentI>& getComponents() const noexcept {
         return components_;
     }
-    [[nodiscard]] virtual std::string_view getName() const noexcept = 0;
 
 protected:
     Container<ContainerI> containers_;
@@ -40,6 +41,7 @@ static void to_json(nlohmann::json& j, const ContainerI& containerI) {
     to_json(obj["containers"], containerI.getContainers());
     to_json(obj["components"], containerI.getComponents());
     obj["name"] = containerI.getName();
+    obj["id"] = containerI.getID();
     j.push_back(obj);
 }
 

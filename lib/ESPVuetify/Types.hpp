@@ -5,7 +5,8 @@
 
 namespace ESPVuetify {
 
-typedef std::variant<bool, int, double, std::string> SupportedTypes;
-typedef std::function<void(const SupportedTypes&)> Callback;
+typedef std::variant<bool, int, double, std::string> PropType;
+typedef std::variant<bool, int, double, std::string, std::vector<int>> ValueType;
+typedef std::function<void(const ValueType&)> Callback;
 
 }

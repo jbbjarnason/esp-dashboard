@@ -13,9 +13,4 @@ public:
     }
 };
 
-static void to_json(nlohmann::json& j, const Column& column) {
-    nlohmann::json obj;
-
-}
-
 }

@@ -13,33 +13,39 @@
 
 namespace ESPVuetify {
 
-static void to_json(nlohmann::json& j, const SupportedTypes& v) {
+static void to_json(nlohmann::json& j, const ValueType& v) {
     std::visit([&](auto&& value) {
-        j = nlohmann::json{{"value", std::forward<decltype(value)>(value)}};
+        j = std::forward<decltype(value)>(value);
     }, v);
 }
 
-static void from_json(const nlohmann::json& j, SupportedTypes& v) {
+static void to_json(nlohmann::json& j, const PropType& v) {
+    std::visit([&](auto&& value) {
+        j = std::forward<decltype(value)>(value);
+    }, v);
+}
+
+static void from_json(const nlohmann::json& j, PropType& v) {
     v = j.at("value"); // this could callback double as int but does it really matter
 }
 
 class Prop {
 public:
     Prop() = default;
-    explicit Prop(SupportedTypes value): value_(std::move(value)) {}
-    inline Prop& operator=(const SupportedTypes& value) {
+    explicit Prop(PropType value): value_(std::move(value)) {}
+    inline Prop& operator=(const PropType& value) {
         value_ = value;
         return *this;
     }
-    inline Prop& operator=(SupportedTypes&& value) {
+    inline Prop& operator=(PropType&& value) {
         value_ = value;
         return *this;
     }
-    [[nodiscard]] inline const SupportedTypes& get() const noexcept {
+    [[nodiscard]] inline const PropType& get() const noexcept {
         return value_;
     }
 private:
-    SupportedTypes value_{};
+    PropType value_{};
 };
 
 static void to_json(nlohmann::json& j, const Prop& p) {
@@ -68,7 +74,7 @@ public:
         cb_ = cb;
         return *this;
     }
-    inline void propagate(const SupportedTypes& value) const {
+    inline void propagate(const ValueType& value) const {
         cb_(value);
     }
 private:
@@ -78,13 +84,19 @@ private:
 class Component : public GenID {
 public:
     explicit Component() = default;
-    void addProp(const std::string& key, const SupportedTypes& value) {
+    void setValue(const ValueType& value) {
+        value_ = value;
+    }
+    void addProp(const std::string& key, const PropType& value) {
         propMap_[key] = value;
     }
     void addEvent(const Callback& cb) {
         event_ = cb;
     }
-    [[nodiscard]] const SupportedTypes& getProp(const std::string& key) const {
+    [[nodiscard]] const ValueType& getValue() const noexcept {
+        return value_;
+    }
+    [[nodiscard]] const PropType& getProp(const std::string& key) const {
         try {
             return propMap_.at(key).get();
         } catch (const std::out_of_range&) {
@@ -100,11 +112,13 @@ public:
 private:
     PropMap propMap_;
     std::optional<Event> event_{ std::nullopt };
+    ValueType value_;
 };
 
 static void to_json(nlohmann::json& j, const Component& c) {
     to_json(j, c.getPropMap());
     j["event"] = c.getEvent().has_value();
+    to_json(j["value"], c.getValue());
     j["id"] = c.getID();
 }
 

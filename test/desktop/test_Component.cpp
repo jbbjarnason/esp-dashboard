@@ -16,7 +16,7 @@ public:
 
 TEST_F(Component_test, addProperty) {
     component_.addProp("foo", "bar");
-    ASSERT_EQ(SupportedTypes ("bar"),component_.getProp("foo"));
+    ASSERT_EQ(PropType("bar"),component_.getProp("foo"));
 }
 TEST_F(Component_test, throwOnNotFoundProperty) {
 #pragma GCC diagnostic push

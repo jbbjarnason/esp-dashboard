@@ -15,6 +15,9 @@ public:
     template<typename Derived> // Todo: use enable_if
     std::shared_ptr<Derived> create() {
         auto child{ std::make_shared<Derived>() };
+        child->setOnDestruct([this]() {
+            cleanup();
+        });
         items_.push_back(child);
         return child;
     }
@@ -46,13 +49,11 @@ private:
 
 template<typename T>
 static void to_json(nlohmann::json& j, const Container<T>& c) {
-    nlohmann::json arr;
     for (const auto& ptr : c) {
         if (auto component{ ptr.lock() }) {
-            to_json(arr, *component);
+            to_json(j, *component);
         }
     }
-    j["container"] = arr;
 }
 
 }
