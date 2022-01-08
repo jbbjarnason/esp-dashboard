@@ -1,6 +1,8 @@
 #pragma once
 #include <random>
 
+#include "json.hpp"
+
 namespace ESPVuetify {
 
 // Using mersenne twister random engine
@@ -15,5 +17,9 @@ public:
 private:
     UUID id_{ gen32() };
 };
+
+static void to_json(nlohmann::json& j, const GenID& genId) {
+    j["id"] = genId.getID();
+}
 
 }

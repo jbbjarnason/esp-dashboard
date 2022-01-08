@@ -35,7 +35,7 @@ private:
 static void to_json(nlohmann::json& j, const ComponentI& componentI) {
     nlohmann::json obj;
     to_json(obj, componentI.getBase());
-    obj["name"] = componentI.getName();
+    to_json(obj, (const GenericI&) componentI);
     j.push_back(obj);
 }
 

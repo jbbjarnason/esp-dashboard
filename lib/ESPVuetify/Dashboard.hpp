@@ -1,24 +1,27 @@
 #pragma once
 #include <memory>
 #include "Container.hpp"
+#include "Tab.hpp"
 
 namespace ESPVuetify {
-
-class Tab;
 
 /**
 *  @brief Dashboard main class, parent of all containers and widgets.
 */
-class Dashboard: std::enable_shared_from_this<Dashboard> {
+class Dashboard {
 public:
-    inline static std::shared_ptr<Dashboard> instance();
-
-    std::shared_ptr<Tab> create() const;
-
-protected:
-    Dashboard();
-    Container container_;
-    inline static std::weak_ptr<Dashboard> _instance;
+    std::shared_ptr<Tab> create() {
+        return tabs_.create<Tab>();
+    }
+    const Container<Tab>& getTabs() const noexcept {
+        return tabs_;
+    }
+private:
+    Container<Tab> tabs_;
 };
+
+static void to_json(nlohmann::json& j, const Dashboard& dashboard) {
+    to_json(j, dashboard.getTabs());
+}
 
 }

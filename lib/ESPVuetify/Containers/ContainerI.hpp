@@ -40,8 +40,8 @@ static void to_json(nlohmann::json& j, const ContainerI& containerI) {
     nlohmann::json obj;
     to_json(obj["containers"], containerI.getContainers());
     to_json(obj["components"], containerI.getComponents());
-    obj["name"] = containerI.getName();
-    obj["id"] = containerI.getID();
+    to_json(obj, (const GenericI&) containerI);
+    to_json(obj, (const GenID&) containerI);
     j.push_back(obj);
 }
 

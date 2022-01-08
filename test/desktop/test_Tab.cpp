@@ -17,4 +17,5 @@ public:
 
 TEST_F(Tab_test, createButton) {
     auto button{ tab_.create<ComponentStub>() };
+
 }
